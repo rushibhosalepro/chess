@@ -1,0 +1,16 @@
+packages:
+  "chess.js": "Chess rules, move validation, and board state management"
+  "socket.io-client": "Real-time bidirectional communication for gameplay"
+  "framer-motion": "Premium UI animations and page transitions"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility function to efficiently merge Tailwind CSS classes"
+
+images:
+  - path: "artifacts/chess-game/public/images/chess-hero.png"
+    description: "Luxurious, abstract dark architectural background with subtle volumetric lighting, dark stone textures, and soft metallic gold accents, creating an elegant, premium atmosphere for a chess application."
+    aspect_ratio: "16:9"
+
+notes:
+  - "Using chess.js for client-side move validation to provide immediate UI feedback (dots on valid squares) before emitting the move to the server."
+  - "Player ID is generated client-side via crypto.randomUUID() and persisted in localStorage to maintain identity across reloads and identify player color."
+  - "Socket connection is established on the Game page and listens for 'game-updated' events to keep the board in sync."

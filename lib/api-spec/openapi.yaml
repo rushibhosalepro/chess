@@ -1,0 +1,224 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Multiplayer Chess API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: games
+    description: Chess game operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /games:
+    get:
+      operationId: listGames
+      tags: [games]
+      summary: List active games
+      responses:
+        "200":
+          description: List of games
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GameSummary"
+    post:
+      operationId: createGame
+      tags: [games]
+      summary: Create a new game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGameRequest"
+      responses:
+        "201":
+          description: Game created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+  /games/{gameId}:
+    get:
+      operationId: getGame
+      tags: [games]
+      summary: Get a game by ID
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Game details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "404":
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /games/{gameId}/join:
+    post:
+      operationId: joinGame
+      tags: [games]
+      summary: Join a game as the second player
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JoinGameRequest"
+      responses:
+        "200":
+          description: Joined game
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "400":
+          description: Cannot join game
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    CreateGameRequest:
+      type: object
+      properties:
+        playerName:
+          type: string
+      required:
+        - playerName
+    JoinGameRequest:
+      type: object
+      properties:
+        playerName:
+          type: string
+      required:
+        - playerName
+    GameSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [waiting, active, finished]
+        whitePlayerName:
+          type: string
+        blackPlayerName:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+      required:
+        - id
+        - status
+        - whitePlayerName
+        - createdAt
+    Game:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [waiting, active, finished]
+        whitePlayerId:
+          type: string
+        whitePlayerName:
+          type: string
+        blackPlayerId:
+          type: string
+          nullable: true
+        blackPlayerName:
+          type: string
+          nullable: true
+        fen:
+          type: string
+        pgn:
+          type: string
+        winner:
+          type: string
+          nullable: true
+          enum: [white, black, draw]
+        moves:
+          type: array
+          items:
+            type: string
+        whiteTimeMs:
+          type: number
+          description: White player remaining time in milliseconds
+        blackTimeMs:
+          type: number
+          description: Black player remaining time in milliseconds
+        lastMoveAt:
+          type: string
+          nullable: true
+          description: ISO timestamp of the last move
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - status
+        - whitePlayerId
+        - whitePlayerName
+        - fen
+        - pgn
+        - moves
+        - whiteTimeMs
+        - blackTimeMs
+        - createdAt
+        - updatedAt
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
