@@ -28,9 +28,9 @@ export function useMatchmaking(): UseMatchmakingReturn {
   const connect = useCallback(() => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) return;
 
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const apiHost = import.meta.env.VITE_API_HOST ?? "localhost:3000";
-    const url = `${protocol}//${apiHost}/api/ws`;
+    // const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    // const apiHost = import.meta.env.VITE_API_HOST ?? "localhost:3000";
+    const url = import.meta.env.VITE_WEBSOCKET_URL;
     const ws = new WebSocket(url);
     wsRef.current = ws;
 

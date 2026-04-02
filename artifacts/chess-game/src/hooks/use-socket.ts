@@ -35,7 +35,7 @@ export function useSocket({
 
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const apiHost = import.meta.env.VITE_API_HOST ?? "localhost:3000";
-    const url = `${protocol}//${apiHost}/api/ws`;
+    const url = import.meta.env.VITE_WEBSOCKET_URL;
 
     const ws = new WebSocket(url);
     wsRef.current = ws;
